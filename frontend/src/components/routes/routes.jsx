@@ -6,7 +6,8 @@ import App from "./App";
 import { useContext } from "react";
 import { AuthContext } from "../Authenticator";
 import { Navigate } from "react-router-dom";
-
+import Home from "./Home";
+import TeacherDetails from "./TeacherDetails";
 
 
 
@@ -26,7 +27,11 @@ const routes = [
     path: "/login",
     element: <App />,
     errorElement: <Error/>
-  }
+  },
+  {
+      path: "/teacherDetails/:id",
+      element: <AuthenticateRoute element={<TeacherDetails />} />,
+    },
 ];
 
 export default routes;
