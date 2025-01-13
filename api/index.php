@@ -36,17 +36,45 @@ if (explode("/", $endpoint)[0] === "teachers") {
 
         $arr = teachers_func($endpoint, $method);
         json_response($arr[0], $arr[1]);
-} else if (explode("/", $endpoint)[0] === "towatchlist") {
-        require_once __DIR__ . "/routes/towatchlist_route.php";
-        $arr = towatchlist_func($endpoint, $method);
+} else if (explode("/", $endpoint)[0] === "students") {
+        require_once __DIR__ . "/routes/students_route.php";
+        $arr = students_func($endpoint, $method);
         json_response($arr[0], $arr[1]);
-} else if (explode("/", $endpoint)[0] === "completedwatchlist") {
+} else if (explode("/", $endpoint)[0] === "appointments") {
 
-        require_once __DIR__ . "/routes/completedWatchList_route.php";
-        $arr = completedWatchList_route($endpoint, $method);
+        require_once __DIR__ . "/routes/appointments.php";
+        $arr = appointments_route($endpoint, $method);
         json_response($arr[0], $arr[1]);
 }
-else if(explode("/", $endpoint)[0] === "users")
+
+else if (explode("/", $endpoint)[0] === "appointmentTeachers") {
+
+    require_once __DIR__ . "/routes/appointmentTeachers.php";
+    $arr = appointmentTeachers_route($endpoint, $method);
+    json_response($arr[0], $arr[1]);
+}
+
+else if (explode("/", $endpoint)[0] === "approved") {
+
+    require_once __DIR__ . "/routes/approved.php";
+    $arr = approved_route($endpoint, $method);
+    json_response($arr[0], $arr[1]);
+}
+
+else if (explode("/", $endpoint)[0] === "approvedTeachers") {
+
+    require_once __DIR__ . "/routes/approvedTeachers.php";
+    $arr = approvedTeachers_route($endpoint, $method);
+    json_response($arr[0], $arr[1]);
+}
+else if (explode("/", $endpoint)[0] === "completed") {
+
+    require_once __DIR__ . "/routes/completed.php";
+    $arr = completed_route($endpoint, $method);
+    json_response($arr[0], $arr[1]);
+}
+
+else if(explode("/", $endpoint)[0] === "completedTeachers")
 {
     require_once __DIR__."/routes/users.php";
     $arr=users_func($endpoint, $method);

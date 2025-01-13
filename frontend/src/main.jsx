@@ -1,14 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import { BrowserRouter } from 'react-router-dom'
-import AppContextProvider from './context/AppContext.jsx'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { AuthProvider } from "./components/Authenticator"; 
+import './index.css';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import routes from "./components/routes/routes";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <AppContextProvider>
-      <App />
-    </AppContextProvider>
-  </BrowserRouter>,
-)
+const router = createBrowserRouter(routes, { basename: import.meta.env.Base_URL });
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </React.StrictMode>
+);
