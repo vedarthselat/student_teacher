@@ -9,45 +9,15 @@ function Teacher({ teacher}) {
 
   const [click, setClick] = useState({ clicked: false, alreadyExists: false, alreadyWatched: false });
 
-//   async function handleClick(ev) {
-//     if(!APIKey)
-//     {
-//       navigate("/login");
-//     }
-//     const formObject = new FormData();
-//     formObject.append("teacherID", teacher.teacherID);
-//     formObject.append("priority", 5);
-//     ev.stopPropagation(); // To prevent the MovieDetails from opening
-
-//     try {
-//       const response = await fetch(
-//         "https://loki.trentu.ca/~vedarthselat/3430/assn/assn2-arpanarora227/api/towatchlist/entries",
-//         {
-//           method: "POST",
-//           body: formObject,
-//           headers: {
-//             "X-API-KEY": APIKey,
-//           },
-//         }
-//       );
-
-//       const data = await response.json();
-//       console.log(data);
-
-//       if (data.Success) {
-//         setClick({ clicked: true, alreadyExists: false, alreadyWatched: false });
-//         setTimeout(() => {
-//           setClick({ clicked: false, alreadyExists: false, alreadyWatched: false });
-//         }, 2000);
-//       } else if (data.Message) {
-//         setClick({ clicked: true, alreadyExists: true, alreadyWatched: false });
-//       } else if (data.Message2 && movie.type === "home") {
-//         setClick({ clicked: true, alreadyExists: false, alreadyWatched: true });
-//       }
-//     } catch (error) {
-//       console.error("Failed to add to watchlist", error);
-//     }
-//   }
+  async function handleClick(ev) {
+    if(!APIKey)
+    {
+      navigate("/login");
+    }
+    
+    navigate(`/teacherDetails/${teacher.teacherID}`);
+    
+  }
 
 //   async function handleRemove(ev) {
 //     ev.stopPropagation(); // To prevent the MovieDetails from opening
@@ -81,7 +51,7 @@ function Teacher({ teacher}) {
 //   }
 
 return (
-    <div className="flex flex-col items-center text-center">
+    <div className="flex flex-col items-center text-center" onClick={handleClick}>
       {teacher.image && (
         <img
           src={`data:image/jpeg;base64,${teacher.image}`}

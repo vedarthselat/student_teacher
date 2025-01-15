@@ -8,6 +8,7 @@ import { AuthContext } from "../Authenticator";
 import { Navigate } from "react-router-dom";
 import Home from "./Home";
 import TeacherDetails from "./TeacherDetails";
+import RequestedAppointments from "./RequestedAppointments";
 
 
 
@@ -31,6 +32,10 @@ const routes = [
   {
       path: "/teacherDetails/:id",
       element: <AuthenticateRoute element={<TeacherDetails />} />,
+    },
+  {
+      path: "/requestedAppointments",
+      element: <AuthenticateRoute element={<RequestedAppointments />} />,
     },
 ];
 
