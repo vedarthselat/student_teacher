@@ -23,7 +23,7 @@ if ($method === 'OPTIONS') {
     if ($method === 'OPTIONS') {
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT, PATCH");
-        header("Access-Control-Allow-Headers: Authorization, Content-Type");
+        header("Access-Control-Allow-Headers: Authorization, Content-Type, X-API-KEY");
         exit;
     }
     

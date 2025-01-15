@@ -26,13 +26,28 @@ function appointments_route($endpoint, $method)
     $pdo=connectdb();
     $endpoint=trim($endpoint, "/");
 
-    if(count(explode("/", $endpoint)) == 1 && $method ==="GET" )
-    {
-      $stmt=$pdo->prepare("SELECT appointment.*, teacher.subject FROM appointment JOIN teacher ON appointment.teacherID = teacher.teacherID WHERE appointment.studentID=? ");
+    if (count(explode("/", $endpoint)) == 1 && $method === "GET") {
+      $stmt = $pdo->prepare("
+          SELECT appointment.*, teacher.subject, teacher.image, teacher.name
+          FROM appointment
+          JOIN teacher ON appointment.teacherID = teacher.teacherID
+          WHERE appointment.studentID = ?
+      ");
       $stmt->execute([$StudentID]);
-      $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
-      return ([200, ["Student's Appointments"=>$result]]);
-    }
+      $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  
+      // Iterate through each row to encode the image field
+      foreach ($results as &$row) {
+          if (!empty($row['image'])) {
+              $row['image'] = base64_encode($row['image']);
+          }
+      }
+  
+      return ([200, ["Student's Appointments" => $results]]);
+  }
+  
+
+
     else if(count(explode("/", $endpoint)) == 2 && $method ==="POST" && explode("/", $endpoint)[1] == "entries")
     {
       $errors=[];

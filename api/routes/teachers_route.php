@@ -6,6 +6,35 @@ function teachers_func($endpoint, $method)
     $pdo = connectdb();
     $endpoint = trim($endpoint, "/");
 
+
+    if ($method === "GET" && count(explode("/", $endpoint)) == 1 && isset($_GET["name"]) && isset($_GET["subject"])) {
+        $name = "%" . $_GET["name"] . "%";
+        $subject = $_GET["subject"];
+        $stmt = $pdo->prepare("SELECT teacherID, name, username, email, image, subject FROM teacher WHERE name LIKE ? AND subject = ?");
+        $stmt->execute([$name, $subject]);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($result as &$row) {
+            if (!empty($row['image'])) {
+                $row['image'] = base64_encode($row['image']); // Convert binary data to Base64
+            }
+        }
+        return ([200, ["teachers" => $result]]);
+    }
+
+    if ($method === "GET" && count(explode("/", $endpoint)) == 1 && isset($_GET["name"])) {
+        $name = "%" . $_GET["name"] . "%";
+        $stmt = $pdo->prepare("SELECT teacherID, name, username, email, image, subject FROM teacher WHERE name LIKE ?");
+        $stmt->execute([$name]);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($result as &$row) {
+            if (!empty($row['image'])) {
+                $row['image'] = base64_encode($row['image']); // Convert binary data to Base64
+            }
+        }
+        return ([200, ["teachers" => $result]]);
+    }
+
+
     if (count(explode("/", $endpoint)) == 1 && $method === "GET" && isset($_GET["subject"])) {
         $subject = $_GET["subject"];
         $stmt = $pdo->prepare("SELECT teacherID, name, username, email, image, subject FROM teacher WHERE subject = ?");
@@ -16,11 +45,17 @@ function teachers_func($endpoint, $method)
 
 
     if (count(explode("/", $endpoint)) == 1 && $method === "GET") {
-     
-        $stmt = $pdo->query("SELECT teacherID, name, username, email subject FROM teacher");
+        $stmt = $pdo->query("SELECT teacherID, name, username, email, image, subject FROM teacher");
         $allRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $arr = [200,  $allRows];
-        return $arr;
+    
+        // Encode BLOB data as Base64
+        foreach ($allRows as &$row) {
+            if (!empty($row['image'])) {
+                $row['image'] = base64_encode($row['image']); // Convert binary data to Base64
+            }
+        }
+    
+        return ([200, ["All teachers" => $allRows]]);
     }
 
     else if (count(explode("/", $endpoint)) == 2 && $method === "GET") {
@@ -30,8 +65,10 @@ function teachers_func($endpoint, $method)
         if (empty($results)) {
             return ([400, ["Error" => "ID does not exist!"]]);
         } 
-        else
-            return ([200, ["Info of teacher of id " . explode("/", $endpoint)[1] => $results]]);
+        if(!empty($results['image'])){
+        $results['image'] = base64_encode($results['image']); // Convert binary data to Base64
+        }
+        return ([200, ["Info of teacher" => $results]]);
     } 
 
     else if(count(explode("/", $endpoint)) == 2 && $method ==="POST" && explode("/", $endpoint)[1] == "entries")
