@@ -26,6 +26,19 @@ function appointments_route($endpoint, $method)
     $pdo=connectdb();
     $endpoint=trim($endpoint, "/");
 
+    if ($method === "GET" && count(explode("/", $endpoint)) == 1 && isset($_GET["name"])) {
+      $name = "%" . $_GET["name"] . "%";
+      $stmt = $pdo->prepare("SELECT teacher.name, teacher.image, appointment.* FROM appointment JOIN teacher ON appointment.teacherID = teacher.teacherID WHERE name LIKE ? AND studentID = ?");
+      $stmt->execute([$name, $StudentID]);
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($result as &$row) {
+          if (!empty($row['image'])) {
+              $row['image'] = base64_encode($row['image']); // Convert binary data to Base64
+          }
+      }
+      return ([200, ["appointments" => $result]]);
+   }
+
     if (count(explode("/", $endpoint)) == 1 && $method === "GET") {
       $stmt = $pdo->prepare("
           SELECT appointment.*, teacher.subject, teacher.image, teacher.name
@@ -46,7 +59,7 @@ function appointments_route($endpoint, $method)
       return ([200, ["Student's Appointments" => $results]]);
   }
   
-
+  
 
     else if(count(explode("/", $endpoint)) == 2 && $method ==="POST" && explode("/", $endpoint)[1] == "entries")
     {
@@ -108,7 +121,7 @@ function appointments_route($endpoint, $method)
       $result=$stmt->fetch(PDO::FETCH_ASSOC);
       if(empty($result))
       {
-         return ([400, ["Error"=>"AppointID does nit exist"]]);
+         return ([400, ["Error"=>"AppointID does not exist"]]);
       }
      $stmt=$pdo->prepare("DELETE FROM appointment WHERE appointID = ?");
      $stmt->execute([$appointID]);

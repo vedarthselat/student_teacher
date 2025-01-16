@@ -118,7 +118,7 @@ function LoginForm() {
               )}
 
               <div className="self-end underline hover:text-blue-400">
-                <Link to="/SignUp">Signup</Link>
+                <Link to="/loginTeacher">Teacher? Login here!</Link>
               </div>
 
               <div>

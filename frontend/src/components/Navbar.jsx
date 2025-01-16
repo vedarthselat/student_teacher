@@ -1,24 +1,22 @@
 import { NavLink } from "react-router-dom";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "./Authenticator";
 
-export default function Navbar({ getSearchTeachers}) {
+export default function Navbar({ getSearchTeachers }) {
   const useAuth = useContext(AuthContext);
   const isAuthenticated = useAuth.isAuthenticated;
   const [content, setContent] = useState("");
 
-
   const modifyContent = (ev) => {
     const newValue = ev.target.value;
     setContent(newValue);
-  }
+  };
 
   const handleSubmit = (ev) => {
     ev.preventDefault();
     getSearchTeachers(content);
     setContent("");
-  }
-  
+  };
 
   return (
     <>
@@ -30,14 +28,19 @@ export default function Navbar({ getSearchTeachers}) {
           <NavLink to="/requestedAppointments" className="hover:bg-[#ff8800] rounded-lg hover:shadow-md p-2 font-bold text-1xl">
             Requested Appointments
           </NavLink>
-          <NavLink to="/" className="hover:bg-[#ff8800] rounded-lg hover:shadow-md p-2 font-bold text-1xl">
+          <NavLink to="/consideredAppointments" className="hover:bg-[#ff8800] rounded-lg hover:shadow-md p-2 font-bold text-1xl">
             Considered Appointments
+          </NavLink>
+          <NavLink to="/completedAppointments" className="hover:bg-[#ff8800] rounded-lg hover:shadow-md p-2 font-bold text-1xl">
+            Completed Appointments
           </NavLink>
         </div>
 
         <div className="flex gap-14 items-center">
           <form className="SearchForm" onSubmit={handleSubmit}>
+            <label htmlFor="search-input" className="sr-only">Search</label> {/* Screen reader accessible label */}
             <input
+              id="search-input" // Unique id added for accessibility
               type="text"
               value={content}
               onChange={modifyContent}

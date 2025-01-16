@@ -61,10 +61,38 @@ export default function RequestedAppointments() {
     getAppointments();
   }, []);
 
+
+  function getSearchResults(nameEntered) {
+    let SearchURL='';
+    
+      SearchURL = `https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/appointments?name=${encodeURIComponent(nameEntered)}`;
+    const getSearchTeachers = async () => {
+      try {
+        const response = await fetch(SearchURL, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": APIKey,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const allAppointments = data["appointments"]; 
+        setAppointments(allAppointments);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      }
+    };
+    getSearchTeachers();
+  }
   return (
     <>
       <header>
-        <Navbar />
+        <Navbar 
+          getSearchTeachers={getSearchResults}
+        />
       </header>
       <main>
         <h1 className="text-3xl font-bold text-center my-4">Requested Appointments</h1>
@@ -85,7 +113,7 @@ export default function RequestedAppointments() {
               {/* Appointment Details */}
               <h2 className="text-lg font-semibold mb-2">{appointment.name}</h2>
               <p className="text-sm text-gray-700">Date: {appointment.date}</p>
-              <p className="text-sm text-gray-700">Time: {appointment.time} {appointment.abb}</p>
+              <p className="text-sm text-gray-700">Time: {appointment.time.slice(0, 8)} {appointment.abb}</p>
               <p className="text-sm text-gray-700">Year: {appointment.year}</p>
               <p className="text-sm text-blue-600 font-medium">Status: Requested</p>
 
