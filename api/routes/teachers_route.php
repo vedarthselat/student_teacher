@@ -164,9 +164,8 @@ function teachers_func($endpoint, $method)
         {
             return([400, ["Errors"=>$errors]]);
         }
-        $stmt = $pdo->prepare("SELECT username, password, api_key FROM teacher WHERE username = :username");
-        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-        $stmt->execute();
+        $stmt = $pdo->prepare("SELECT username, password, api_key FROM teacher WHERE username = ?");
+        $stmt->execute([$username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$user) {
             $errors['username'] = "Username does not exist";

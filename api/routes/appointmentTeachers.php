@@ -56,7 +56,7 @@ function appointmentTeachers_route($endpoint, $method)
       $date=$result["date"];
       $time=$result["time"];
       $abb=$result["abb"];
-      $stmt=$pdo->prepare("INSERT INTO approved(studentID, teacherID, year, date, time, abb, approved) VALUES (?, ?, ?, ?, ?, ?, ?)");
+      $stmt=$pdo->prepare("INSERT INTO approved(studentID, teacherID, year, date, time, abb, approve) VALUES (?, ?, ?, ?, ?, ?, ?)");
       $stmt->execute([$studentID, $TeacherID, $year, $date, $time, $abb, $consider_num]);
       $stmt=$pdo->prepare("DELETE FROM appointment WHERE appointID = ?");
       $stmt->execute([$appointID]);

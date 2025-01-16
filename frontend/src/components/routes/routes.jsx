@@ -9,7 +9,10 @@ import { Navigate } from "react-router-dom";
 import Home from "./Home";
 import TeacherDetails from "./TeacherDetails";
 import RequestedAppointments from "./RequestedAppointments";
-
+import ConsideredAppointments from "./ConsideredAppointments";
+import CompletedAppointments from "./CompletedAppointments";
+import LoginTeacher from "./LoginTeacher";
+import HomeTeacher from "./HomeTeacher";
 
 
 
@@ -30,12 +33,28 @@ const routes = [
     errorElement: <Error/>
   },
   {
+    path: "/loginTeacher",
+    element: <LoginTeacher />,
+  },
+  {
+    path: "/homeTeacher",
+    element: <AuthenticateRoute element={<HomeTeacher />} />,
+  },
+  {
       path: "/teacherDetails/:id",
       element: <AuthenticateRoute element={<TeacherDetails />} />,
     },
   {
       path: "/requestedAppointments",
       element: <AuthenticateRoute element={<RequestedAppointments />} />,
+    },
+    {
+      path: "/consideredAppointments",
+      element: <AuthenticateRoute element={<ConsideredAppointments />} />,
+    },
+    {
+      path: "/completedAppointments",
+      element: <AuthenticateRoute element={<CompletedAppointments />} />,
     },
 ];
 
