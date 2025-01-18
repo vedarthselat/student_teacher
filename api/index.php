@@ -62,7 +62,6 @@ else if (explode("/", $endpoint)[0] === "approved") {
 }
 
 else if (explode("/", $endpoint)[0] === "approvedTeachers") {
-
     require_once __DIR__ . "/routes/approvedTeachers.php";
     $arr = approvedTeachers_route($endpoint, $method);
     json_response($arr[0], $arr[1]);
@@ -76,8 +75,14 @@ else if (explode("/", $endpoint)[0] === "completed") {
 
 else if(explode("/", $endpoint)[0] === "completedTeachers")
 {
-    require_once __DIR__."/routes/users.php";
-    $arr=users_func($endpoint, $method);
+    require_once __DIR__."/routes/completedTeachers.php";
+    $arr=completedTeachers_route($endpoint, $method);
+    json_response($arr[0], $arr[1]);
+}
+else if(explode("/", $endpoint)[0] === "admin")
+{
+    require_once __DIR__."/routes/admin.php";
+    $arr=admin_func($endpoint, $method);
     json_response($arr[0], $arr[1]);
 }
 else
