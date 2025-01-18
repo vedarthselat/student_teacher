@@ -16,6 +16,8 @@ import HomeTeacher from "./HomeTeacher";
 import ResolvedAppointments from "./ResolvedAppointments";
 import CompletedAppointmentTeachers from "./CompletedAppointmentTeachers";
 import LoginAdmin from "./LoginAdmin";
+import HomeAdmin from "./HomeAdmin";
+import RemoveStudent from "./RemoveStudent";
 
 
 
@@ -51,10 +53,7 @@ const routes = [
     path: "/completedAppointmentTeachers",
     element: <AuthenticateRoute element={<CompletedAppointmentTeachers />} />,
   },
-  {
-    path: "/loginAdmin",
-    element: <LoginAdmin />,
-  },
+  
   {
       path: "/teacherDetails/:id",
       element: <AuthenticateRoute element={<TeacherDetails />} />,
@@ -70,6 +69,18 @@ const routes = [
     {
       path: "/completedAppointments",
       element: <AuthenticateRoute element={<CompletedAppointments />} />,
+    },
+    {
+      path: "/loginAdmin",
+      element: <LoginAdmin />,
+    },
+    {
+      path: "/homeAdmin",
+      element: <AuthenticateRoute element={<HomeAdmin />} />,
+    },
+    {
+      path: "/removeStudent",
+      element: <AuthenticateRoute element={<RemoveStudent />} />,
     },
 ];
 

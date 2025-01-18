@@ -6,6 +6,20 @@ function students_func($endpoint, $method)
     $pdo = connectdb();
     $endpoint = trim($endpoint, "/");
     
+
+
+    if ($method === "GET" && count(explode("/", $endpoint)) == 1 && isset($_GET["name"])) {
+        $name = "%" . $_GET["name"] . "%";
+        $stmt = $pdo->prepare("SELECT studentID, name, username, email, image FROM student WHERE name LIKE ?");
+        $stmt->execute([$name]);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($result as &$row) {
+            if (!empty($row['image'])) {
+                $row['image'] = base64_encode($row['image']); // Convert binary data to Base64
+            }
+        }
+        return ([200, ["students" => $result]]);
+    }
     
     if(count(explode("/", $endpoint)) == 2 && $method=="POST" && explode("/", $endpoint)[1] == "session")
     {
@@ -42,6 +56,19 @@ function students_func($endpoint, $method)
         return([200, ["Your API Key"=>$user['api_key']]]);
     }
 
+    if (count(explode("/", $endpoint)) == 1 && $method === "GET") {
+        $stmt = $pdo->query("SELECT studentID, name, username, email, image FROM student");
+        $allRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Encode BLOB data as Base64
+        foreach ($allRows as &$row) {
+            if (!empty($row['image'])) {
+                $row['image'] = base64_encode($row['image']); // Convert binary data to Base64
+            }
+        }
+    
+        return ([200, ["All students" => $allRows]]);
+    }
 
     
 
