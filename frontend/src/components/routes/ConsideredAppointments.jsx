@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react"; // Add the missing imports
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Authenticator";
 import Navbar from "../Navbar";
@@ -69,35 +69,43 @@ export default function ConsideredAppointments() {
       </header>
       <main>
         <h1 className="text-3xl font-bold text-center my-4">Considered Appointments</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
-          {appointments.map((appointment) => (
-            <div
-              key={appointment.appointmentID}
-              className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between items-center border hover:shadow-lg transition-transform transform hover:-translate-y-1"
-              style={{ minHeight: "350px" }}
-            >
-              {/* Teacher Image */}
-              <img
-                src={`data:image/jpeg;base64,${appointment.image}`}
-                alt={`${appointment.name}'s image`}
-                className="rounded-full w-24 h-24 mb-4 object-cover border"
-              />
+        
+        {/* Conditional Rendering for No Appointments */}
+        {appointments.length === 0 ? (
+          <div className="text-center text-xl text-gray-700 font-semibold mt-10">
+            <p>No appointments have been considered.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
+            {appointments.map((appointment) => (
+              <div
+                key={appointment.appointmentID}
+                className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between items-center border hover:shadow-lg transition-transform transform hover:-translate-y-1"
+                style={{ minHeight: "350px" }}
+              >
+                {/* Teacher Image */}
+                <img
+                  src={`data:image/jpeg;base64,${appointment.image}`}
+                  alt={`${appointment.name}'s image`}
+                  className="rounded-full w-24 h-24 mb-4 object-cover border"
+                />
 
-              {/* Appointment Details */}
-              <h2 className="text-lg font-semibold mb-2">{appointment.name}</h2>
-              <p className="text-sm text-gray-700">Date: {appointment.date}</p>
-              <p className="text-sm text-gray-700">Time: {appointment.time.slice(0, 8)} {appointment.abb}</p>
-              <p className="text-sm text-gray-700">Year: {appointment.year}</p>
+                {/* Appointment Details */}
+                <h2 className="text-lg font-semibold mb-2">{appointment.name}</h2>
+                <p className="text-sm text-gray-700">Date: {appointment.date}</p>
+                <p className="text-sm text-gray-700">Time: {appointment.time.slice(0, 8)} {appointment.abb}</p>
+                <p className="text-sm text-gray-700">Year: {appointment.year}</p>
 
-              {/* Approval Status */}
-              {appointment.approve === 1 ? (
-                <p className="text-sm text-green-600 font-bold">Status: Accepted</p>
-              ) : (
-                <p className="text-sm text-red-600 font-bold">Status: Rejected</p>
-              )}
-            </div>
-          ))}
-        </div>
+                {/* Approval Status */}
+                {appointment.approve === 1 ? (
+                  <p className="text-sm text-green-600 font-bold">Status: Accepted</p>
+                ) : (
+                  <p className="text-sm text-red-600 font-bold">Status: Rejected</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </>
   );

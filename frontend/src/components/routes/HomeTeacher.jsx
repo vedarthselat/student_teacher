@@ -1,28 +1,24 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Authenticator";
-import Teacher from "./Teacher";
-import Navbar from "../Navbar";
-
+import NavbarTeacher from "../NavbarTeacher";
 
 export default function HomeTeacher() {
-  const [teachers, setTeachers] = useState([]); // Stores all fetched movies
-  const [filteredTeachers, setFilteredTeachers] = useState([]); // Stores movies filtered by priority
-//   const [priority, setPriority] = useState("None"); // "None" as the default value
-const [subject, setSubject] = useState("None");
+  const [appointments, setAppointments] = useState([]); // Stores all fetched appointments
   const useAuth = useContext(AuthContext);
   const APIKey = useAuth.APIKey;
   const navigate = useNavigate();
   const BASE_URL =
-    "https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/teachers";
+    "https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/appointmentTeachers";
 
-  // Function to fetch watchlist movies
-  async function getTeachers() {
+  // Function to fetch appointments
+  async function getAppointments() {
     try {
       const response = await fetch(BASE_URL, {
         method: "GET",
         headers: {
           "Content-Type": "Application/json",
+          "X-API-KEY": APIKey,
         },
       });
 
@@ -31,121 +27,106 @@ const [subject, setSubject] = useState("None");
       }
 
       const data = await response.json();
-      const allTeachers = data["All teachers"]; // Accessing the specific key in the response
-      setTeachers(allTeachers);
-      setFilteredTeachers(allTeachers); // Initially show all movies when "None" is selected
+      const allAppointments = data["Teacher's Appointments"]; // Accessing the specific key in the response
+      setAppointments(allAppointments);
     } catch (error) {
-      console.error("Error fetching teachers:", error);
+      console.error("Error fetching appointments:", error);
     }
   }
 
-  // Handle dropdown change to filter movies by priority
-  function handleSubjectChange(e) {
-    const selectedSubject = e.target.value;
-    setSubject(selectedSubject);
+  async function processAppointment(appointID, decision) {
+    try {
+      const response = await fetch(`https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/appointmentTeachers/consider/${appointID}/${decision}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "Application/json",
+          "X-API-KEY": APIKey,
+        },
+      });
 
-    if (selectedSubject === "None") {
-      setFilteredTeachers(teachers); // Show all movies
-    } else {
-      setFilteredTeachers(teachers.filter((teacher) => teacher.subject === (selectedSubject)));
-    }
-  }
-
-
-  function getSearchResults(nameEntered) {
-    let SearchURL='';
-    if(subject==="None"){
-      SearchURL = `https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/teachers?name=${encodeURIComponent(nameEntered)}`;
-    }
-    else
-    {
-    SearchURL = `https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/teachers?name=${encodeURIComponent(nameEntered)}&subject=${subject}`;
-    }
-    const getSearchTeachers = async () => {
-      try {
-        const response = await fetch(SearchURL, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        const allTeachers = data["teachers"]; 
-        setTeachers(allTeachers);
-        setFilteredTeachers(allTeachers);
-      } catch (error) {
-        console.error("Error fetching search results:", error);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
-    getSearchTeachers();
+
+      // Remove the appointment from the state after successful deletion
+      setAppointments((prevAppointments) =>
+        prevAppointments.filter((appointment) => appointment.appointID !== appointID)
+      );
+    } catch (error) {
+      console.error("Error cancelling appointment", error);
+    }
   }
 
-  // Handle movie click
-//   function handleClick(teacherID) {
-//     navigate(`/watchlist/${movieID}`);
-//   }
-
-  // Function to remove movie from state
-//   function handleRemoveFromState(movieID) {
-//     setMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== movieID));
-//     setFilteredMovies((prevFiltered) => prevFiltered.filter((movie) => movie.id !== movieID));
-//   }
-
   useEffect(() => {
-    getTeachers();
+    getAppointments();
   }, []);
-
-  useEffect(() => {
-    // Filter movies whenever movies or priority changes
-    if (subject === "None") {
-      setFilteredTeachers(teachers);
-    } else {
-      setFilteredTeachers(teachers.filter((teacher) => teacher.subject ===subject));
-    }
-  }, [subject, teachers]);
 
   return (
     <>
       <header>
-      <Navbar 
-  getSearchTeachers={getSearchResults}
-/>
+        <NavbarTeacher />
       </header>
       <main>
-        <h1 className="text-3xl font-bold text-center my-4">All Available Teachers</h1>
-        <div className="text-center my-4">
-          <label htmlFor="priority-select" className="font-bold mr-2">
-            Filter by :
-          </label>
-          <select
-  id="subject-select"
-  value={subject}
-  onChange={handleSubjectChange}
-  className="border p-2 rounded">
-  <option value="None">None</option>
-  <option value="physics">Physics</option>
-  <option value="chemistry">Chemistry</option>
-  <option value="mathematics">Mathematics</option>
-  <option value="biology">Biology</option>
-  <option value="computer science">Computer Science</option>
-</select>
+        <h1 className="text-4xl font-extrabold text-center my-6 text-gray-800">
+          Requested Appointments
+        </h1>
 
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
-  {filteredTeachers.map((teacher) => (
-    <div
-      key={teacher.teacherID}
-      className="bg-gray-200 rounded-lg shadow p-4 flex flex-col justify-between"
-      style={{ minHeight: "300px" }} // Set the height directly here
-    >
-      <Teacher teacher={teacher} />
-    </div>
-  ))}
-</div>
+        {/* Conditional Rendering for No Appointments */}
+        {appointments.length === 0 ? (
+          <div className="text-center text-xl text-gray-700 font-semibold mt-10">
+            <p>No appointments have been requested yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-6">
+            {appointments.map((appointment) => (
+              <div
+                key={appointment.appointID}
+                className="bg-gradient-to-br from-white to-gray-100 rounded-lg shadow-lg p-6 flex flex-col justify-between items-center border border-gray-200 hover:shadow-2xl transition-transform transform hover:-translate-y-2"
+                style={{ minHeight: "380px" }}
+              >
+                {/* Teacher Image */}
+                <img
+                  src={`data:image/jpeg;base64,${appointment.image}`}
+                  alt={`${appointment.name}'s image`}
+                  className="rounded-full w-28 h-28 mb-4 object-cover border-2 border-blue-500"
+                />
 
+                {/* Appointment Details */}
+                <h2 className="text-xl font-bold mb-2 text-gray-900">
+                  {appointment.name}
+                </h2>
+                <p className="text-sm text-gray-700 mb-1">
+                  <span className="font-medium">Date:</span> {appointment.date}
+                </p>
+                <p className="text-sm text-gray-700 mb-1">
+                  <span className="font-medium">Time:</span> {appointment.time.slice(0, 8)} {appointment.abb}
+                </p>
+                <p className="text-sm text-gray-700 mb-1">
+                  <span className="font-medium">Year:</span> {appointment.year}
+                </p>
+                <p className="text-sm text-blue-600 font-medium mb-4">
+                  Status: Requested
+                </p>
+
+                {/* Buttons */}
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => processAppointment(appointment.appointID, 0)}
+                    className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 shadow-md"
+                  >
+                    Cancel Appointment
+                  </button>
+                  <button
+                    onClick={() => processAppointment(appointment.appointID, 1)}
+                    className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 shadow-md"
+                  >
+                    Approve Appointment
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </>
   );

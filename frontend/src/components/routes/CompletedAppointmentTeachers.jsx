@@ -1,14 +1,14 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Authenticator";
-import Navbar from "../Navbar";
+import NavbarTeacher from "../NavbarTeacher";
 
-export default function CompletedAppointments() {
+export default function CompletedAppointmentTeachers() {
   const [completedAppointments, setCompletedAppointments] = useState([]); // Stores all fetched appointments
   const useAuth = useContext(AuthContext);
   const APIKey = useAuth.APIKey;
   const navigate = useNavigate();
-  const BASE_URL = "https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/completed";
+  const BASE_URL = "https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/completedTeachers";
 
   // Function to fetch appointments
   async function getCompletedAppointments() {
@@ -26,36 +26,11 @@ export default function CompletedAppointments() {
       }
 
       const data = await response.json();
-      const appointmentsData = data["Student's Completed Appointments"]; // Accessing the specific key in the response
+      const appointmentsData = data["Teacher's Completed Appointments"]; // Accessing the specific key in the response
       setCompletedAppointments(appointmentsData);
     } catch (error) {
       console.error("Error fetching appointments", error);
     }
-  }
-
-  // Function to search for appointments by name
-  function getSearchResults(nameEntered) {
-    let SearchURL = `https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/completed?name=${encodeURIComponent(nameEntered)}`;
-    const getSearchTeachers = async () => {
-      try {
-        const response = await fetch(SearchURL, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "X-API-KEY": APIKey,
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        const allAppointments = data["Student's Completed Appointments"];
-        setCompletedAppointments(allAppointments);
-      } catch (error) {
-        console.error("Error fetching search results:", error);
-      }
-    };
-    getSearchTeachers();
   }
 
   useEffect(() => {
@@ -65,12 +40,12 @@ export default function CompletedAppointments() {
   return (
     <>
       <header>
-        <Navbar getSearchTeachers={getSearchResults} />
+        <NavbarTeacher />
       </header>
       <main>
         <h1 className="text-3xl font-bold text-center my-4">Completed Appointments</h1>
-        
-        {/* Conditional Rendering for No Appointments */}
+
+        {/* Conditional Rendering for No Completed Appointments */}
         {completedAppointments.length === 0 ? (
           <div className="text-center text-xl text-gray-700 font-semibold mt-10">
             <p>No appointments have been completed yet.</p>

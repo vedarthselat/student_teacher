@@ -28,9 +28,14 @@ function approvedTeachers_route($endpoint, $method)
 
     if(count(explode("/", $endpoint)) == 1 && $method ==="GET" )
     {
-      $stmt=$pdo->prepare("SELECT studentID, year, date, time, abb, approve FROM approved WHERE teacherID=?"); 
+      $stmt=$pdo->prepare("SELECT student.name, student.image, approved.approvedID, approved.studentID, approved.year, approved.date, approved.time, approved.abb, approved.approve FROM approved JOIN student ON approved.studentID = student.studentID WHERE approved.teacherID=?"); 
       $stmt->execute([$TeacherID]);
       $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($result as &$row) {
+         if (!empty($row['image'])) {
+             $row['image'] = base64_encode($row['image']);
+         }
+     }
       return ([200, ["Teacher's Appointments"=>$result]]);
     }
     else if(count(explode("/", $endpoint)) == 2 && $method ==="DELETE")
@@ -39,6 +44,7 @@ function approvedTeachers_route($endpoint, $method)
         $stmt=$pdo->prepare("SELECT * FROM approved WHERE approvedID=?");
         $stmt->execute([$approvedID]);
         $result=$stmt->fetch(PDO::FETCH_ASSOC);
+        
         if(empty($result))
         {
             return ([400, ["Error"=> "Invalid approvedID"]]);

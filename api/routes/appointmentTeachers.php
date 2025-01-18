@@ -11,7 +11,7 @@ function appointmentTeachers_route($endpoint, $method)
       $stmt=$pdo->prepare("SELECT teacherID FROM teacher WHERE api_key = ?");
       $stmt->execute([$api_key]);
       $result=$stmt->fetch(PDO::FETCH_ASSOC);
-      if(empty($result))
+      if(empty($result)) 
       {
          return ([400, ["Error"=> "The API key is invalid!"]]);
       }
@@ -28,9 +28,15 @@ function appointmentTeachers_route($endpoint, $method)
 
     if(count(explode("/", $endpoint)) == 1 && $method ==="GET" )
     {
-      $stmt=$pdo->prepare("SELECT appointment.*, teacher.subject FROM appointment JOIN teacher ON appointment.teacherID = teacher.teacherID WHERE appointment.teacherID=? ");
+      $stmt=$pdo->prepare("SELECT appointment.*, student.name, student.image FROM appointment JOIN student ON appointment.studentID = student.studentID WHERE appointment.teacherID=? ");
       $stmt->execute([$TeacherID]);
       $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($result as &$row) 
+      {
+         if (!empty($row['image'])) {
+             $row['image'] = base64_encode($row['image']); // Convert binary data to Base64
+         }
+     }
       return ([200, ["Teacher's Appointments"=>$result]]);
     }
     

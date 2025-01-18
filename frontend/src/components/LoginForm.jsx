@@ -31,7 +31,6 @@ function LoginForm() {
         login(data["Your API Key"]);
         navigate("/");
       } else {
-        // Extract errors from the API response
         const APIerrors = data["Error(s)"] || {};
         setErr({
           username: APIerrors["username"] || "",
@@ -55,7 +54,6 @@ function LoginForm() {
 
       getAPIKey(newFormData);
 
-      // Clear form state after submission
       setFormData({ username: "", password: "" });
       setErr({});
     } else {
@@ -117,8 +115,13 @@ function LoginForm() {
                 </div>
               )}
 
-              <div className="self-end underline hover:text-blue-400">
-                <Link to="/loginTeacher">Teacher? Login here!</Link>
+              <div className="flex flex-col items-center gap-y-2 text-sm">
+                <div className="underline hover:text-blue-400">
+                  <Link to="/loginTeacher">Teacher? Login here!</Link>
+                </div>
+                <div className="underline hover:text-blue-400">
+                  <Link to="/loginAdmin">Admin? Login here!</Link>
+                </div>
               </div>
 
               <div>

@@ -28,9 +28,14 @@ function completedTeachers_route($endpoint, $method)
 
     if(count(explode("/", $endpoint)) == 1 && $method ==="GET" )
     {
-      $stmt=$pdo->prepare("SELECT * FROM completedAppointment WHERE teacherID=?"); 
+      $stmt=$pdo->prepare("SELECT completedAppointment.*, student.name, student.image FROM completedAppointment JOIN student ON completedAppointment.studentID = student.studentID WHERE completedAppointment.teacherID=?"); 
       $stmt->execute([$TeacherID]);
       $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($result as &$row) {
+         if (!empty($row['image'])) {
+             $row['image'] = base64_encode($row['image']);
+         }
+     }
       return ([200, ["Teacher's Completed Appointments"=>$result]]);
     }
 
