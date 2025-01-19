@@ -71,6 +71,40 @@ function teachers_func($endpoint, $method)
         return ([200, ["Info of teacher" => $results]]);
     } 
 
+
+    else if(count(explode("/", $endpoint)) == 2 && $method ==="POST" && explode("/", $endpoint)[1] == "password")
+    {
+        $errors=[];
+        if(!isset($_POST["username"]))
+        {
+           $errors["username"]="username not provided";
+        }
+        if(!isset($_POST["password"]))
+        {
+           $errors["password"]="password not provided";
+        }
+  
+        if(!empty($errors))
+        {
+           return ([400, ["Error"=>$errors]]);
+        }
+      // Read file content
+        $username=$_POST["username"];
+        $password=$_POST["password"];
+        $stmt = $pdo->prepare("SELECT password FROM teacher WHERE username = ?");
+        $stmt->execute([$username]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if(empty($result))
+        {
+            return ([400, ["Error"=>"Username does not exist!"]]);
+        }
+
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare("UPDATE teacher SET password = ? WHERE username = ?");
+        $stmt->execute([$hashedPassword, $username]);
+        return ([200, ["Success"=>"Password updated"]]);
+    }
+
     else if(count(explode("/", $endpoint)) == 2 && $method ==="POST" && explode("/", $endpoint)[1] == "entries")
     {
       $errors=[];
@@ -92,7 +126,7 @@ function teachers_func($endpoint, $method)
       }
       if(!isset($_POST["name"]))
       {
-         $errors["name"]="subject not provided";
+         $errors["name"]="name not provided";
       }
 
       if(!empty($errors))

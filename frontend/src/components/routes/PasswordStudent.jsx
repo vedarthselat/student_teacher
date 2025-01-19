@@ -2,13 +2,14 @@ import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Authenticator";
 
-const BASE_URL = "https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/teachers/session";
+const BASE_URL = "https://loki.trentu.ca/~vedarthselat/3430/student_teacher/api/students/password";
 
-function LoginTeacher() {
+function PasswordStudent() {
   const [err, setErr] = useState({});
   const [formData, setFormData] = useState({ username: "", password: "" });
+  const [message, setMessage] = useState(null);
+  const [apiErrors, setApiErrors] = useState(null);
   const useAuth = useContext(AuthContext);
-  const login = useAuth.login;
   const navigate = useNavigate();
 
   const handleChange = (ev) => {
@@ -16,9 +17,12 @@ function LoginTeacher() {
       ...oldFormData,
       [ev.target.name]: ev.target.value,
     }));
+    setErr({});
+    setMessage(null);
+    setApiErrors(null);
   };
 
-  async function getAPIKey(info) {
+  async function updatePassword(info) {
     try {
       const response = await fetch(BASE_URL, {
         method: "POST",
@@ -27,11 +31,20 @@ function LoginTeacher() {
 
       const data = await response.json();
 
-      if (data["Your API Key"]) {
-        login(data["Your API Key"]);
-        navigate("/homeTeacher");
+      if (response.ok) {
+        setMessage("Success! Password updated!");
+        setFormData({ username: "", password: "" });
+        setErr({});
+        setApiErrors(null);
       } else {
-        const APIerrors = data["Error(s)"] || {};
+        const APIerrors = data["Error"] || {};
+        if (typeof APIerrors === "string") {
+          // Handle APIerrors as a string
+          setApiErrors(APIerrors);
+        } else if (typeof APIerrors === "object") {
+          // Combine object values into a single string
+          setApiErrors(Object.values(APIerrors).join(". "));
+        }
         setErr({
           username: APIerrors["username"] || "",
           password: APIerrors["password"] || "",
@@ -52,10 +65,7 @@ function LoginTeacher() {
       newFormData.append("username", formData.username);
       newFormData.append("password", formData.password);
 
-      getAPIKey(newFormData);
-
-      setFormData({ username: "", password: "" });
-      setErr({});
+      updatePassword(newFormData);
     } else {
       setErr(errors);
     }
@@ -64,10 +74,10 @@ function LoginTeacher() {
   const validate = () => {
     const errors = {};
     if (!formData.username) {
-      errors.username = "Username is required";
+      errors.username = "Username is required.";
     }
     if (!formData.password) {
-      errors.password = "Password is required";
+      errors.password = "Password is required.";
     }
     return errors;
   };
@@ -76,7 +86,8 @@ function LoginTeacher() {
     <>
       <div className="min-h-screen flex justify-center items-center bg-[url('./assets/classroom.jpeg')] bg-cover bg-center bg-no-repeat text-white">
         <div className="bg-[#252323] rounded-3xl shadow-lg p-3 w-80 min-h-72 flex flex-col justify-center">
-          <h1 className="text-4xl font-bold mb-10 mt-4 self-center">Login</h1>
+          <h1 className="text-4xl font-bold mb-10 mt-4 self-center">Forgot Password?</h1>
+          <p className="text-center mb-4">Enter your student username and new password.</p>
           <fieldset className="flex flex-col justify-center items-center">
             <form onSubmit={handleSubmit} className="flex flex-col items-center gap-y-5">
               <div>
@@ -84,7 +95,7 @@ function LoginTeacher() {
                   type="text"
                   name="username"
                   id="username"
-                  placeholder="Username"
+                  placeholder="Enter your username"
                   value={formData.username}
                   onChange={handleChange}
                   className="border-4 border-solid border-[#ff8800] rounded-full p-2 w-64 text-black"
@@ -99,7 +110,7 @@ function LoginTeacher() {
                   type="password"
                   name="password"
                   id="password"
-                  placeholder="Password"
+                  placeholder="Enter your new password"
                   value={formData.password}
                   onChange={handleChange}
                   className="border-4 border-solid border-[#ff8800] rounded-full p-2 w-64 text-black"
@@ -109,17 +120,37 @@ function LoginTeacher() {
                 )}
               </div>
 
+              {apiErrors && (
+                <div style={{ color: "red", marginTop: "10px" }}>
+                  {apiErrors}
+                </div>
+              )}
+
+              {message && (
+                <div style={{ color: "green", marginTop: "10px" }}>
+                  {message}
+                </div>
+              )}
+
               {err.global && (
                 <div style={{ color: "red", marginTop: "10px" }}>
                   {err.global}
                 </div>
               )}
 
-              <div className="flex flex-col items-center gap-y-2 text-sm">
+              <div>
+                <button
+                  type="submit"
+                  className="bg-[#ff8800] hover:scale-105 hover:shadow-md hover:shadow-[#858483] text-white font-bold py-2 px-4 rounded-full mb-5"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+            <div className="flex flex-col items-center gap-y-2 text-sm">
               <div className="underline hover:text-blue-400">
-                  <Link to="/passTeacher">Forgot password?</Link>
+                  <Link to="/loginTeacher">Teacher? Login here!</Link>
                 </div>
-                <br/>
                 <div className="underline hover:text-blue-400">
                   <Link to="/login">Student? Login here!</Link>
                 </div>
@@ -127,16 +158,6 @@ function LoginTeacher() {
                   <Link to="/loginAdmin">Admin? Login here!</Link>
                 </div>
               </div>
-
-              <div>
-                <button
-                  type="submit"
-                  className="bg-[#ff8800] hover:scale-105 hover:shadow-md hover:shadow-[#858483] text-white font-bold py-2 px-4 rounded-full mb-5"
-                >
-                  Login
-                </button>
-              </div>
-            </form>
           </fieldset>
         </div>
       </div>
@@ -144,4 +165,4 @@ function LoginTeacher() {
   );
 }
 
-export default LoginTeacher;
+export default PasswordStudent;

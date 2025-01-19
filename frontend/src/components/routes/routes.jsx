@@ -18,6 +18,10 @@ import CompletedAppointmentTeachers from "./CompletedAppointmentTeachers";
 import LoginAdmin from "./LoginAdmin";
 import HomeAdmin from "./HomeAdmin";
 import RemoveStudent from "./RemoveStudent";
+import AddTeacher from "./AddTeacher";
+import RemoveTeacher from "./RemoveTeacher";
+import PasswordTeacher from "./PasswordTeacher";
+import PasswordStudent from "./PasswordStudent";
 
 
 
@@ -81,6 +85,22 @@ const routes = [
     {
       path: "/removeStudent",
       element: <AuthenticateRoute element={<RemoveStudent />} />,
+    },
+    {
+      path: "/addTeacher",
+      element: <AuthenticateRoute element={<AddTeacher />} />,
+    },
+    {
+      path: "/removeTeacher",
+      element: <AuthenticateRoute element={<RemoveTeacher />} />,
+    },
+    {
+      path: "/passTeacher",
+      element: <PasswordTeacher/>,
+    },
+    {
+      path: "/passStudent",
+      element: <PasswordStudent/>,
     },
 ];
 

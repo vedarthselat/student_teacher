@@ -116,6 +116,10 @@ function LoginForm() {
               )}
 
               <div className="flex flex-col items-center gap-y-2 text-sm">
+              <div className="underline hover:text-blue-400">
+                  <Link to="/passStudent">Forgot password?</Link>
+                </div>
+                <br/>
                 <div className="underline hover:text-blue-400">
                   <Link to="/loginTeacher">Teacher? Login here!</Link>
                 </div>

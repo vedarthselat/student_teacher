@@ -28,11 +28,11 @@ export default function NavbarAdmin({ search, getSearchTeachers }) {
           <NavLink to="/removeStudent" className="hover:bg-[#ff8800] rounded-lg hover:shadow-md p-2 font-bold text-1xl">
             Remove Student
           </NavLink>
-          <NavLink to="/consideredAppointments" className="hover:bg-[#ff8800] rounded-lg hover:shadow-md p-2 font-bold text-1xl">
-            Considered Appointments
+          <NavLink to="/addTeacher" className="hover:bg-[#ff8800] rounded-lg hover:shadow-md p-2 font-bold text-1xl">
+            Add Teacher
           </NavLink>
-          <NavLink to="/completedAppointments" className="hover:bg-[#ff8800] rounded-lg hover:shadow-md p-2 font-bold text-1xl">
-            Completed Appointments
+          <NavLink to="/removeTeacher" className="hover:bg-[#ff8800] rounded-lg hover:shadow-md p-2 font-bold text-1xl">
+            Remove Teacher
           </NavLink>
         </div>
 
